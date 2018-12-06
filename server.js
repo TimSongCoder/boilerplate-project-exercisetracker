@@ -74,7 +74,7 @@ app.post('/api/exercise/add', (req, res) => {
   });
 });
 
-// Query specific user's full exercise log ✅; part of logs
+// Query specific user's full exercise log ✅; part of logs ✅
 app.get('/api/exercise/log', (req, res) => {
   console.log(`non-exist query: ${req.query.nonExist}`);
   console.log(req.query);
