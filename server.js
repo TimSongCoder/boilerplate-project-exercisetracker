@@ -74,9 +74,15 @@ app.post('/api/exercise/add', (req, res) => {
   });
 });
 
-// Query specific user's exercise log ✅
+// Query specific user's full exercise log ✅; part of logs
 app.get('/api/exercise/log', (req, res) => {
-  const userId = req.query.userId;
+  const userId = req.query.userId, 
+        fromDateStr = req.query.from, 
+        toDateStr = req.query.to, 
+        limitStr = req.query.limit;
+  const fromDate = new Date(fromDateStr), 
+        toDate = new Date(toDateStr), 
+        limit = Number.parseInt(limitStr);
   if(userId){
     User.findById(userId, 'name exercises', (err, user) => {
       if(err) {
@@ -85,7 +91,17 @@ app.get('/api/exercise/log', (req, res) => {
         const select = ['_id', 'name', 'exercises'];
         const copyUser = {};
         select.forEach(key => copyUser[key] = user[key]);
-        copyUser.exercises_count = user.exercises.length;
+        
+        if(fromDate){
+          copyUser.exercises = copyUser.exercises.filter(exercise => exercise.date.getTime() > fromDate.getTime());
+        }
+        if(toDate){
+          copyUser.exercises = copyUser.exercises.filter(exercise => exercise.date.getTime() < toDate.getTime());
+        }
+        if(limit){
+          copyUser.exercises = copyUser.exercises.slice(0, Math.min(limit, copyUser.exercises.length));
+        }
+        copyUser.exercises_count = copyUser.exercises.length;
         res.json(copyUser);
       }
     });
@@ -93,8 +109,6 @@ app.get('/api/exercise/log', (req, res) => {
     res.json({error: 'you should provide userId to query'});
   }
 });
-
-// Query specific user's exercises log selectively
 
 // Not found middleware
 app.use((req, res, next) => {
