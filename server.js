@@ -6,6 +6,8 @@ const cors = require('cors')
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/exercise-track' )
+const userSchema = new mongoose.Schema({name: {type: String, required: true}});
+const User = mongoose.Model('User', userSchema);
 
 app.use(cors())
 
@@ -47,4 +49,13 @@ const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
 
-app.post('/api/exercise/new-user');
+app.post('/api/exercise/new-user', (req, res) => {
+  const username = req.body.username;
+  console.log(`New user: ${username}`);
+  // Simple empty string validation
+  if(username) {
+    User.create({name: username});
+  } else {
+    res.json({error: 'username can not be empty'});
+  }
+});
