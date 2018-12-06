@@ -74,6 +74,12 @@ app.post('/api/exercise/add', (req, res) => {
   });
 });
 
+// Query specific user's exercise log
+app.get('/api/exercise/log', (req, rew) => {
+  const userId = req.params.userId;
+  if()
+});
+
 // Not found middleware
 app.use((req, res, next) => {
   return next({status: 404, message: 'not found'})
