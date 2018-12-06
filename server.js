@@ -76,13 +76,16 @@ app.post('/api/exercise/add', (req, res) => {
 
 // Query specific user's full exercise log ✅; part of logs
 app.get('/api/exercise/log', (req, res) => {
+  console.log(`non-exist query: ${req.query.nonExist}`);
+  console.log(req.query);
   const userId = req.query.userId, 
         fromDateStr = req.query.from, 
         toDateStr = req.query.to, 
         limitStr = req.query.limit;
-  const fromDate = new Date(fromDateStr), 
-        toDate = new Date(toDateStr), 
-        limit = Number.parseInt(limitStr);
+  const fromDate = fromDateStr ? new Date(fromDateStr) : undefined, 
+        toDate = toDateStr ? new Date(toDateStr) : undefined, 
+        limit = limitStr ? Number.parseInt(limitStr) : undefined;
+  console.log(`${fromDate}, ${toDate}, ${limit}`);
   if(userId){
     User.findById(userId, 'name exercises', (err, user) => {
       if(err) {
