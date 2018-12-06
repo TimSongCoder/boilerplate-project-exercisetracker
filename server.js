@@ -55,7 +55,7 @@ app.get('/api/exercise/users', (req, res) => {
 app.post('/api/exercise/add', (req, res) => {
   console.log(req.body);
   const description = req.body.description,
-        duration = req.body.duration,
+        duration = Number.parseInt(req.body.duration),
         dateStr = req.body.date;
   const parsedDate = new Date(dateStr);
   const date = parsedDate ? parsedDate : new Date();
@@ -63,9 +63,11 @@ app.post('/api/exercise/add', (req, res) => {
     if(err) {
       res.json({error: err.message});
     }else{
-      User.findByIdAndUpdate(req.body.userId, {exersices: matchingUser.exercises.concat({description, duration, date})}, (err, doc) => {
+      User.findByIdAndUpdate(req.body.userId, {exercises: matchingUser.exercises.concat({description, duration, date})}, {new: true, select: {name: 1, exercises: 1}}, (err, newUser) => {
         if(err){
-          
+          res.json({error: err.message});
+        }else{
+          res.json(newUser);
         }
       });
     }
