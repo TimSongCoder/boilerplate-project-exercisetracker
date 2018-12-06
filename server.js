@@ -74,7 +74,7 @@ app.post('/api/exercise/add', (req, res) => {
   });
 });
 
-// Query specific user's exercise log
+// Query specific user's exercise log ✅
 app.get('/api/exercise/log', (req, res) => {
   const userId = req.query.userId;
   if(userId){
@@ -82,14 +82,19 @@ app.get('/api/exercise/log', (req, res) => {
       if(err) {
         res.json({error: err.message});
       }else{
-        user['exercise_count'] = user.exercises.length;
-        res.json(user);
+        const select = ['_id', 'name', 'exercises'];
+        const copyUser = {};
+        select.forEach(key => copyUser[key] = user[key]);
+        copyUser.exercises_count = user.exercises.length;
+        res.json(copyUser);
       }
     });
   }else{
     res.json({error: 'you should provide userId to query'});
   }
 });
+
+// Query specific user's exercises log selectively
 
 // Not found middleware
 app.use((req, res, next) => {
