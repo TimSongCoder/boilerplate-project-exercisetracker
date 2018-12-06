@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
+// Create new user ✅
 app.post('/api/exercise/new-user', (req, res) => {
   const username = req.body.username;
   console.log(`New user: ${username}`);
@@ -35,6 +36,19 @@ app.post('/api/exercise/new-user', (req, res) => {
   } else {
     res.json({error: 'username can not be empty'});
   }
+});
+
+// Query all users ✅
+app.get('/api/exercise/users', (req, res) => {
+  User.find({})
+    .select({name: 1})
+    .exec((err, users) => {
+    if(err) {
+      res.json({error: err.message});
+    }else {
+      res.json(users);
+    }
+  });
 });
 
 // Not found middleware
