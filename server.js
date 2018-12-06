@@ -51,7 +51,7 @@ app.get('/api/exercise/users', (req, res) => {
   });
 });
 
-// Add exercise to a specific user
+// Add exercise to a specific user ✅
 app.post('/api/exercise/add', (req, res) => {
   console.log(req.body);
   const description = req.body.description,
