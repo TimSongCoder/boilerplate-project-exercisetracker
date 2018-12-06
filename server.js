@@ -7,19 +7,35 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/exercise-track' )
 const userSchema = new mongoose.Schema({name: {type: String, required: true}});
-const User = mongoose.Model('User', userSchema);
+const User = mongoose.model('User', userSchema);
 
 app.use(cors())
 
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 
-
 app.use(express.static('public'))
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
+app.post('/api/exercise/new-user', (req, res) => {
+  const username = req.body.username;
+  console.log(`New user: ${username}`);
+  // Simple empty string validation
+  if(username) {
+    User.create({name: username}, (err, newUser) => {
+      if(err){
+        console.log(err);
+        res.json({error: 'can not create user'});
+      }
+      console.log(newUser);
+      res.json({username: newUser.name, _id: newUser._id});
+    });
+  } else {
+    res.json({error: 'username can not be empty'});
+  }
+});
 
 // Not found middleware
 app.use((req, res, next) => {
@@ -48,14 +64,3 @@ app.use((err, req, res, next) => {
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
-
-app.post('/api/exercise/new-user', (req, res) => {
-  const username = req.body.username;
-  console.log(`New user: ${username}`);
-  // Simple empty string validation
-  if(username) {
-    User.create({name: username});
-  } else {
-    res.json({error: 'username can not be empty'});
-  }
-});
