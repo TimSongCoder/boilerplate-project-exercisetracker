@@ -75,9 +75,20 @@ app.post('/api/exercise/add', (req, res) => {
 });
 
 // Query specific user's exercise log
-app.get('/api/exercise/log', (req, rew) => {
-  const userId = req.params.userId;
-  if()
+app.get('/api/exercise/log', (req, res) => {
+  const userId = req.query.userId;
+  if(userId){
+    User.findById(userId, 'name exercises', (err, user) => {
+      if(err) {
+        res.json({error: err.message});
+      }else{
+        user.exercise_count = user.exercises.length;
+        res.json(user);
+      }
+    });
+  }else{
+    res.json({error: 'you should provide userId to query'});
+  }
 });
 
 // Not found middleware
