@@ -6,7 +6,7 @@ const cors = require('cors')
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/exercise-track' )
-const userSchema = new mongoose.Schema({name: {type: String, required: true}});
+const userSchema = new mongoose.Schema({name: {type: String, required: true}, exercises: [{description: String, duration: Number, date: Date}]});
 const User = mongoose.model('User', userSchema);
 
 app.use(cors())
@@ -49,6 +49,12 @@ app.get('/api/exercise/users', (req, res) => {
       res.json(users);
     }
   });
+});
+
+// Add exercise to a specific user
+app.post('/api/exercise/add', (req, res) => {
+  console.log(req.body);
+  User.findAndUpdate({_id: req.body.userId}, {exercises:});
 });
 
 // Not found middleware
