@@ -54,7 +54,22 @@ app.get('/api/exercise/users', (req, res) => {
 // Add exercise to a specific user
 app.post('/api/exercise/add', (req, res) => {
   console.log(req.body);
-  User.findAndUpdate({_id: req.body.userId}, {exercises:});
+  const description = req.body.description,
+        duration = req.body.duration,
+        dateStr = req.body.date;
+  const parsedDate = new Date(dateStr);
+  const date = parsedDate ? parsedDate : new Date();
+  User.findById(req.body.userId, (err, matchingUser) => {
+    if(err) {
+      res.json({error: err.message});
+    }else{
+      User.findByIdAndUpdate(req.body.userId, {exersices: matchingUser.exercises.concat({description, duration, date})}, (err, doc) => {
+        if(err){
+          
+        }
+      });
+    }
+  });
 });
 
 // Not found middleware
