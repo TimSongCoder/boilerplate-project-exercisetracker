@@ -82,7 +82,7 @@ app.get('/api/exercise/log', (req, res) => {
       if(err) {
         res.json({error: err.message});
       }else{
-        user.exercise_count = user.exercises.length;
+        user['exercise_count'] = user.exercises.length;
         res.json(user);
       }
     });
